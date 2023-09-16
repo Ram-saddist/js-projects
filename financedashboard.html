@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Personal Finance Dashboard</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        header {
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+            padding: 1rem;
+        }
+
+        main {
+            padding: 2rem;
+        }
+
+        h1 {
+            margin: 0;
+        }
+
+        h2 {
+            margin-bottom: 0.5rem;
+        }
+
+        button {
+            padding: 0.5rem 1rem;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+            margin-top: 0.5rem;
+        }
+
+        ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        li {
+            border: 1px solid #ccc;
+            padding: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        #monthlyBudget {
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <h1>Personal Finance Dashboard</h1>
+    </header>
+    <main>
+        <section id="expenses">
+            <h2>Expenses</h2>
+            <ul id="expensesList"></ul>
+            <button id="addExpense">Add Expense</button>
+        </section>
+        <section id="income">
+            <h2>Income</h2>
+            <ul id="incomeList"></ul>
+            <button id="addIncome">Add Income</button>
+        </section>
+        <section id="budget">
+            <h2>Budget</h2>
+            <p>Monthly Budget: $<span id="monthlyBudget">0</span></p>
+            <button id="setBudget">Set Budget</button>
+        </section>
+    </main>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const expensesList = document.getElementById('expensesList');
+            const incomeList = document.getElementById('incomeList');
+            const remainingIncomeElement = document.getElementById('remainingIncome');
+            const monthlyBudgetElement = document.getElementById('monthlyBudget');
+            const addExpenseButton = document.getElementById('addExpense');
+            const addIncomeButton = document.getElementById('addIncome');
+            const setBudgetButton = document.getElementById('setBudget');
+
+            let expenses = [];
+            let income = [];
+            let monthlyBudget = 0;
+
+            function updateExpenses() {
+                expensesList.innerHTML = '';
+                expenses.forEach(expense => {
+                    const li = document.createElement('li');
+                    li.textContent = `Expense: $${expense}`;
+                    expensesList.appendChild(li);
+                });
+                updateRemainingIncome();
+            }
+
+            function updateIncome() {
+                incomeList.innerHTML = '';
+                income.forEach(inc => {
+                    const li = document.createElement('li');
+                    li.textContent = `Income: $${inc}`;
+                    incomeList.appendChild(li);
+                });
+                updateRemainingIncome();
+            }
+
+            function updateRemainingIncome() {
+                const totalIncome = income.reduce((total, inc) => total + inc, 0);
+                const totalExpenses = expenses.reduce((total, exp) => total + exp, 0);
+                const remainingIncome = totalIncome - totalExpenses;
+                remainingIncomeElement.textContent = remainingIncome;
+            }
+
+            function updateBudget() {
+                monthlyBudgetElement.textContent = monthlyBudget;
+            }
+
+            addExpenseButton.addEventListener('click', function () {
+                const expenseAmount = parseFloat(prompt('Enter expense amount:'));
+                if (!isNaN(expenseAmount)) {
+                    expenses.push(expenseAmount);
+                    updateExpenses();
+                }
+            });
+
+            addIncomeButton.addEventListener('click', function () {
+                const incomeAmount = parseFloat(prompt('Enter income amount:'));
+                if (!isNaN(incomeAmount)) {
+                    income.push(incomeAmount);
+                    updateIncome();
+                }
+            });
+
+            setBudgetButton.addEventListener('click', function () {
+                const newBudget = parseFloat(prompt('Enter new monthly budget:'));
+                if (!isNaN(newBudget)) {
+                    monthlyBudget = newBudget;
+                    updateBudget();
+                    updateRemainingIncome();
+                }
+            });
+
+            updateExpenses();
+            updateIncome();
+            updateBudget();
+        });
+
+    </script>
+
+</html>

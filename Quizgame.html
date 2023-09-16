@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f7f7f7;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            text-align: center;
+            background-color: #fff;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        .btn-container {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .btn:hover {
+            background-color: #0056b3;
+        }
+
+        .hide {
+            display: none;
+        }
+
+        .next-btn {
+            padding: 10px 20px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .next-btn:hover {
+            background-color: #218838;
+        }
+
+        #score {
+            margin-top: 20px;
+            font-size: 18px;
+        }
+
+        #score-count {
+            font-weight: bold;
+            color: #007bff;
+        }
+    </style>
+    <title>Quiz App</title>
+</head>
+
+<body>
+    <div class="container">
+        <h1>Quiz App</h1>
+        <div id="quiz-container">
+            <div id="question"></div>
+            <div id="answer-buttons" class="btn-container">
+                <!-- Answer buttons will be added here -->
+            </div>
+        </div>
+        <button id="next-button" class="next-btn hide">Next</button>
+        <div id="score" class="hide">
+            <p>Your Score: <span id="score-count">0</span></p>
+        </div>
+    </div>
+    <script>
+        const questionElement = document.getElementById("question");
+        const answerButtonsElement = document.getElementById("answer-buttons");
+        const nextButton = document.getElementById("next-button");
+        const scoreElement = document.getElementById("score");
+        const scoreCountElement = document.getElementById("score-count");
+
+        let currentQuestionIndex = 0;
+        let score = 0;
+
+        const questions = [
+            {
+                question: "What is the capital of France?",
+                answers: [
+                    { text: "Paris", correct: true },
+                    { text: "Madrid", correct: false },
+                    { text: "Rome", correct: false },
+                    { text: "Berlin", correct: false }
+                ]
+            },
+            {
+                question: "Which fruit is the king of fruit?",
+                answers: [
+                    { text: "Mango", correct: true },
+                    { text: "Orange", correct: false },
+                    { text: "Banana", correct: false },
+                    { text: "Apple", correct: false }
+                ]
+            },
+            {
+                question: "Which planet is known as the 'Red Planet'?",
+                answers: [
+                    { text: "Venus", correct: false },
+                    { text: "Mars", correct: true },
+                    { text: "Jupiter", correct: false },
+                    { text: "Saturn", correct: false }
+                ]
+            }
+            // Add more questions
+        ];
+
+        function startGame() {
+            currentQuestionIndex = 0;
+            score = 0;
+            scoreElement.classList.add("hide");
+            nextButton.classList.add("hide");
+            setNextQuestion();
+        }
+
+        function setNextQuestion() {
+            resetState();
+            showQuestion(questions[currentQuestionIndex]);
+        }
+
+        function showQuestion(question) {
+            questionElement.innerText = question.question;
+            question.answers.forEach(answer => {
+                const button = document.createElement("button");
+                button.innerText = answer.text;
+                button.classList.add("btn");
+                button.addEventListener("click", () => selectAnswer(answer));
+                answerButtonsElement.appendChild(button);
+            });
+        }
+
+        function selectAnswer(answer) {
+            const correct = answer.correct;
+            if (correct) {
+                score++;
+                scoreCountElement.innerText = score;
+            }
+            nextButton.classList.remove("hide");
+            answerButtonsElement.classList.add("disabled");
+        }
+
+        function resetState() {
+            while (answerButtonsElement.firstChild) {
+                answerButtonsElement.removeChild(answerButtonsElement.firstChild);
+            }
+            nextButton.classList.add("hide");
+            answerButtonsElement.classList.remove("disabled");
+        }
+
+        nextButton.addEventListener("click", () => {
+            currentQuestionIndex++;
+            if (currentQuestionIndex < questions.length) {
+                setNextQuestion();
+            } else {
+                endGame();
+            }
+        });
+
+        function endGame() {
+            questionElement.innerText = "Quiz complete!";
+            answerButtonsElement.classList.add("hide");
+            nextButton.classList.add("hide");
+            scoreElement.classList.remove("hide");
+        }
+
+        startGame();
+
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        /* Your existing CSS styles */
+
+        .card {
+            width: 100px;
+            height: 150px;
+            background-color: #a9e47c;
+            border-radius: 5px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            font-size: 18px;
+            font-weight: bold;
+            perspective: 800px;
+            transform-style: preserve-3d;
+            margin: 2%;
+            transition: transform 0.5s;
+        }
+
+        .card.active {
+            transform: rotateY(180deg);
+        }
+
+        .card .card-front,
+        .card .card-back {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            backface-visibility: hidden;
+        }
+
+        .card .card-front {
+            transform: rotateY(0deg);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .card .card-back {
+            transform: rotateY(180deg);
+            background-color: #007bff;
+            color: rgb(245, 248, 246);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        #game-container {
+            display: flex;
+            flex-direction: row;
+            flex-wrap: wrap;
+            justify-content: space-between;
+        }
+    </style>
+    <title>Memory Card Game</title>
+</head>
+
+<body>
+    <div class="game-container" id="game-container">
+        <!-- Cards will be generated here -->
+    </div>
+    <script>
+        const cards = ["A", "A", "B", "B", "C", "C", "D", "D", "E", "E", "F", "F", "G", "G", "H", "H"];
+        const gameContainer = document.getElementById("game-container");
+        let openedCards = [];
+        let matchedPairs = 0;
+        let isProcessing = false;
+
+        shuffleCards();
+
+        function shuffleCards() {
+            for (let i = cards.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [cards[i], cards[j]] = [cards[j], cards[i]];
+            }
+            createCards();
+        }
+
+        function createCards() {
+            for (let i = 0; i < cards.length; i++) {
+                const card = document.createElement("div");
+                card.classList.add("card");
+                card.dataset.card = cards[i];
+                card.innerHTML = `
+            <div class="card-front"></div>
+            <div class="card-back">${cards[i]}</div>
+        `;
+                gameContainer.appendChild(card);
+
+                card.addEventListener("click", () => {
+                    if (!isProcessing && !card.classList.contains("active") && openedCards.length < 2) {
+                        card.classList.add("active");
+                        openedCards.push(card);
+                        if (openedCards.length === 2) {
+                            checkMatch();
+                        }
+                    }
+                });
+            }
+        }
+
+        function checkMatch() {
+            isProcessing = true;
+            const card1 = openedCards[0];
+            const card2 = openedCards[1];
+
+            if (card1.dataset.card === card2.dataset.card) {
+                setTimeout(() => {
+                    card1.classList.add("matched");
+                    card2.classList.add("matched");
+                    matchedPairs++;
+                    if (matchedPairs === cards.length / 2) {
+                        setTimeout(() => {
+                            alert("Congratulations! You've matched all pairs!");
+                        }, 300);
+                    }
+                    isProcessing = false;
+                    openedCards = [];
+                }, 500);
+            } else {
+                setTimeout(() => {
+                    card1.classList.remove("active");
+                    card2.classList.remove("active");
+                    isProcessing = false;
+                    openedCards = [];
+                }, 800);
+            }
+        }
+
+    </script>
+</body>
+
+</html>

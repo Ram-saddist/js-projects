@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        h1 {
+            text-align: center;
+        }
+
+        .game-container {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .word-display {
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+
+        .guesses {
+            font-size: 18px;
+            margin-bottom: 10px;
+        }
+
+        #letterInput {
+            padding: 5px;
+            width: 30px;
+            text-transform: uppercase;
+            margin-right: 10px;
+        }
+
+        #guessButton,
+        #resetButton {
+            padding: 5px 10px;
+            font-size: 16px;
+        }
+    </style>
+    <title>Word Guessing Game</title>
+</head>
+
+<body>
+    <h1>WORD GUESSING Game</h1>
+    <div class="game-container">
+        <div class="word-display" id="wordDisplay"></div>
+        <div class="guesses" id="guesses">Guesses:</div>
+        <input type="text" id="letterInput" maxlength="1">
+        <button id="guessButton">Guess</button>
+        <button id="resetButton">Reset</button>
+    </div>
+
+    <script>
+        const words = ["HELLO", "WORLD", "HANGMAN", "JAVASCRIPT", "COMPUTER", "DEVELOPER"];
+        let currentWord = "";
+        let guessedLetters = [];
+        let remainingAttempts = 6;
+
+        const wordDisplay = document.getElementById("wordDisplay");
+        const guessesDisplay = document.getElementById("guesses");
+        const letterInput = document.getElementById("letterInput");
+        const guessButton = document.getElementById("guessButton");
+        const resetButton = document.getElementById("resetButton");
+
+        function chooseRandomWord() {
+            const randomIndex = Math.floor(Math.random() * words.length);
+            return words[randomIndex];
+        }
+
+        function updateWordDisplay() {
+            wordDisplay.textContent = currentWord.split("").map(letter => guessedLetters.includes(letter) ? letter : "_").join(" ");
+        }
+
+        function updateGuessesDisplay() {
+            guessesDisplay.textContent = `Guesses: ${guessedLetters.join(", ")}`;
+        }
+
+        function handleGuess() {
+            const guessedLetter = letterInput.value.toUpperCase();
+
+            if (!guessedLetters.includes(guessedLetter)) {
+                guessedLetters.push(guessedLetter);
+
+                if (!currentWord.includes(guessedLetter)) {
+                    remainingAttempts--;
+                }
+
+                updateWordDisplay();
+                updateGuessesDisplay();
+
+                if (currentWord === currentWord.split("").map(letter => guessedLetters.includes(letter) ? letter : "_").join("")) {
+                    alert("Congratulations! You guessed the word!");
+                } else if (remainingAttempts === 0) {
+                    alert("Game over! The word was: " + currentWord);
+                }
+            }
+
+            letterInput.value = "";
+            letterInput.focus();
+        }
+
+        function resetGame() {
+            currentWord = chooseRandomWord();
+            guessedLetters = [];
+            remainingAttempts = 6;
+            updateWordDisplay();
+            updateGuessesDisplay();
+            letterInput.value = "";
+            letterInput.focus();
+        }
+
+        guessButton.addEventListener("click", handleGuess);
+        resetButton.addEventListener("click", resetGame);
+
+        // Initialize the game
+        resetGame();
+
+    </script>
+</body>
+
+</html>
